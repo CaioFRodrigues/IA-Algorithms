@@ -1,14 +1,14 @@
 
 #include <string.h>
-#include "puzzle.h"
+#include <string>
 #include <stdio.h>
 #include <iostream>
+#include "puzzle.h"
 
 char FINAL_STATE_8[9] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 char FINAL_STATE_15[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-bool isGoal(char *state)
-{
+bool isGoal(char *state) {
     return memcmp(state, FINAL_STATE_8, sizeof(FINAL_STATE_8)) == 0;
 }
 
@@ -18,12 +18,12 @@ void printState(char* state) {
         return;
     }
     for (int i = 0; i < 3; i++) {
-        for(int j = 0; j < 3; j++){
+        for(int j = 0; j < 3; j++) {
             printf("%d ", state[j + i * 3]);
-            }
+        }
         printf("\n");
     }
-    printf("%n");
+    printf("\n");
     return;
 }
 
@@ -41,30 +41,34 @@ bool move8(char* state, moveTo movement, int blankPosition, char* newState) {
     memcpy(newState, state, 9);
     switch (movement)
     {
-        case UP:
+        case UP: {
             if (blankPosition - 3 < 0) return false; //TODO: Remove if speed is needed
             newState[blankPosition] = newState[blankPosition-3];
             newState[blankPosition-3] = BLANK_TILE;
             return true;
-
-        case DOWN:
+            break;
+        }
+        case DOWN: {
             if (blankPosition + 3 > 8) return false;
             newState[blankPosition] = newState[blankPosition+3];
             newState[blankPosition+3] = BLANK_TILE;
             return true;
-
-        case RIGHT:
+            break;
+        }
+        case RIGHT: {
             if (blankPosition == 2 || blankPosition == 5  || blankPosition == 8) return false;
             newState[blankPosition] = newState[blankPosition+1];
             newState[blankPosition+1] = BLANK_TILE;
             return true;
-
-        case LEFT:
+            break;
+        }
+        case LEFT: {
             if (blankPosition == 0 || blankPosition == 3 || blankPosition == 6) return false;
             newState[blankPosition] = newState[blankPosition-1];
             newState[blankPosition-1] = BLANK_TILE;
             return true;
-
+            break;
+        }
         default:
             return false;
     }
@@ -84,24 +88,31 @@ list<PUZZLE_STATE> succ(char* state) {
     list<PUZZLE_STATE> succs;
     int puzzleSize = 9;
     int blankPosition = getBlankPosition(state, puzzleSize);
-
+    PUZZLE_STATE puzzleStateUP;
+    PUZZLE_STATE puzzleStateDOWN;
+    PUZZLE_STATE puzzleStateLEFT;
+    PUZZLE_STATE puzzleStateRIGHT;
     if (puzzleSize == 9) {
-        PUZZLE_STATE puzzleStateUP;
         if (move8(state, UP, blankPosition, puzzleStateUP.state)) {
             succs.push_back(puzzleStateUP);
         }
-        PUZZLE_STATE puzzleStateDOWN;
         if (move8(state, DOWN, blankPosition, puzzleStateDOWN.state)) {
             succs.push_back(puzzleStateDOWN);
         }
-        PUZZLE_STATE puzzleStateLEFT;
         if (move8(state, LEFT, blankPosition, puzzleStateLEFT.state)) {
             succs.push_back(puzzleStateLEFT);
         }
-        PUZZLE_STATE puzzleStateRIGHT;
         if (move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state)) {
             succs.push_back(puzzleStateRIGHT);
         }
     }
+
     return succs;
+}
+
+string stateToString(char* state) {
+    string stateString = "";
+    for (int i = 0; i < 9; i++)
+        stateString += state[i]+48;
+    return stateString;
 }

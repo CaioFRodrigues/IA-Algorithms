@@ -1,20 +1,17 @@
-
-
 #include "input.h"
 #include <iostream>
 
 //Given the input string, returns the ID for it
-int getAlgorithmID(string input)
-{
-    if (input.compare("-bfs"))
+int getAlgorithmID(string input) {
+    if (input.compare("-bfs") == 0)
         return BFS;
-    else if (input.compare("-idfs"))
+    else if (input.compare("-idfs") == 0)
         return IDFS;
-    else if (input.compare("-astar"))
+    else if (input.compare("-astar") == 0)
         return ASTAR;
-    else if (input.compare("-idastar"))
+    else if (input.compare("-idastar") == 0)
         return IDASTAR;
-    else if (input.compare("-gbfs"))
+    else if (input.compare("-gbfs") == 0)
         return GBFS;
 
     return -1;
@@ -22,8 +19,7 @@ int getAlgorithmID(string input)
 
 //Given argv, finds the first comma from the position given as an int
 //Returns -1 if there's no comma
-char getPuzzleLimit(int argc, char **argv, int pos)
-{
+char getPuzzleLimit(int argc, char **argv, int pos) {
     int i;
     for (i = pos; i < argc; i++)
     {  
@@ -37,15 +33,14 @@ char getPuzzleLimit(int argc, char **argv, int pos)
 }
 
 //Given an array from argv, a size, and an already allocated char array, fills the state with the values from the array, converted to int;
-void createState(char **array, int size, char *state)
-{
+void createState(char **array, int size, char *state) {
     for(int i = 0; i < size; i++){
         state[i] = getCharValue(array[i]);
     }
 }
 
 //given a string, transforms its value into a char
-char getCharValue(char *string){
+char getCharValue(char *string) {
     if(!isCharDoubleDigit(string))
         return (*string) - 48;
     
@@ -55,13 +50,13 @@ char getCharValue(char *string){
 }
 
 
-int isCharDoubleDigit(char *string){
+int isCharDoubleDigit(char *string) {
     if(string[1] == '\0')
         return 0;
     else return 1;
 }
 
-bool isSizeValid(int size){
+bool isSizeValid(int size) {
     if (size == 9 || size == 16)
         return true;
     else return false;

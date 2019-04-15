@@ -28,5 +28,6 @@ PUZZLE_STATE makeNode(char* state, int h);
 bool move8(char* state, moveTo movement, int blankPosition, char* newState);
 int getBlankPosition(char* state, int puzzleSize);
 list<PUZZLE_STATE> succ(char* state);
+string stateToString(char* state);
 
 #endif
