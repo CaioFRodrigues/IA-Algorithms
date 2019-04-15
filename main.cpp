@@ -2,32 +2,20 @@
 #include <iostream>
 #include <string>
 #include <string.h>
-#include <deque>
 
+#include "algorithms.h"
 #include "puzzle.h"
 #include "input.h"
 
-char extern FINAL_STATE_8[9];
-char extern FINAL_STATE_15[16];
-
-char *bfs(char *init)
-{
-    if (isGoal(init))
+void callAlgorithm(int algID, char* init) {
+    switch (algID)
     {
-        return init;
-    }
-    return 0;
-}
-
-
-void callAlgorithm(int algID){
-            switch (algID)
-        {
         case BFS:
-            cout << "Não implementado ainda";
+            bfs(init);
             break;
+
         case IDFS:
-            cout << "Não implementado ainda";
+            dfs(init);
             break;
 
         case ASTAR:
@@ -36,7 +24,6 @@ void callAlgorithm(int algID){
 
         case IDASTAR:
             cout << "Não implementado ainda";
-
             break;
 
         case GBFS:
@@ -46,53 +33,37 @@ void callAlgorithm(int algID){
         default:
             cout << "Não implementado ainda";
             break;
-        }
+    }
 }
 
-
-int main(int argc, char *argv[])
-{
-    PUZZLE_STATE initialState;
-
-    deque<PUZZLE_STATE> open;
-    initialState.state[0] = 1;
-    initialState.h = 10;
-
-    if (argc == 0)
-    {
+int main(int argc, char *argv[]) {
+    if (argc == 1) {
         cout << "Please insert argument in specified format";
         return -1;
     }
 
-    string alg(argv[1]); //String has the type of algorithm used
+    string alg(argv[1]);    //String has the type of algorithm used
     int algID = getAlgorithmID(alg);
     int inputPosition = 2;
     bool endOfInput = false;
-    while (!endOfInput)
-    {
-
-        
-        int nextPuzzleLimit = getPuzzleLimit(argc, argv, inputPosition); //nextPuzzleLimit always has the number for the end of 9 entries, not including the comma
+    while (!endOfInput) {
+        int nextPuzzleLimit = getPuzzleLimit(argc, argv, inputPosition);    //nextPuzzleLimit always has the number for the end of 9 entries, not including the comma
         int puzzleSize = nextPuzzleLimit - inputPosition;
 
-
-        if(!isSizeValid(puzzleSize)){
+        if(!isSizeValid(puzzleSize)) {
             cout << "Error - Wrong size";
             return -1;
         }
         
         char state[puzzleSize];
         createState(argv+inputPosition, puzzleSize, state);
+        callAlgorithm(algID, state);
 
-        printState(state);
-        
         if(argc == nextPuzzleLimit)
             endOfInput = true;
 
         inputPosition = nextPuzzleLimit + 1; //Skips comma
-        
-        
     }
 
-
+    return 1;
 }
