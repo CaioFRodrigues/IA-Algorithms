@@ -10,8 +10,11 @@ using namespace std::chrono;
 int bfs(char *init) {
     auto start = steady_clock::now();
     int numNodesExpanded = 0, optimalSolutionLen = 0, solutionTime = 0, averageHeuristic = 0, initialHeuristic = 0;
-    if (isGoal(init))
+    if (isGoal(init)) {
+        cout << "GOAL" << endl;
+        printState(init);
         return 1;
+    }
 
     deque<PUZZLE_STATE> open;
     open.push_back(makeNode(init, 0));
@@ -43,16 +46,31 @@ int bfs(char *init) {
     return 0;
 }
 
-int idfs(char *init) { return 0; }
-int dfs(char *init) {
+int depthLimitedSearch(char *init, char *father, int depthLimited) {
     if (isGoal(init)) {
-        cout << "GOAL" << endl;
+        cout << endl << endl << "GOAL" << endl;
+        printState(init);
         return 1;            
     }
 
-    list<PUZZLE_STATE> succs = succ(init);
-    for (list<PUZZLE_STATE>::iterator it = succs.begin(); it != succs.end(); ++it) {
-        int solution = dfs(it->state);
+    if (depthLimited > 0) {
+        list<PUZZLE_STATE> succs = succ(init);
+        for (list<PUZZLE_STATE>::iterator it = succs.begin(); it != succs.end(); ++it) {
+            if (!compareState(father, it->state)) {
+                int solution = depthLimitedSearch(it->state, init, depthLimited-1);
+                if (solution)
+                    return 1;
+            }
+        }
     }
-    cout << "END" << endl;
+    return 0;
+}
+
+int idfs(char *init) { 
+    int depthLimited = 1;
+    int solution = 0;
+    while(!solution){
+        solution = depthLimitedSearch(init, NULL, depthLimited);
+        depthLimited++;
+    }
 }

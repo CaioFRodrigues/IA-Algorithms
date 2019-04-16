@@ -12,6 +12,11 @@ bool isGoal(char *state) {
     return memcmp(state, FINAL_STATE_8, sizeof(FINAL_STATE_8)) == 0;
 }
 
+bool compareState(char *state, char *state2) {
+    if (state2 == NULL || state == NULL) return false;
+    return memcmp(state, state2, sizeof(state2)) == 0;
+}
+
 void printState(char* state) {
     if (state == NULL) {
         printf("NULL");
@@ -48,10 +53,10 @@ bool move8(char* state, moveTo movement, int blankPosition, char* newState) {
             return true;
             break;
         }
-        case DOWN: {
-            if (blankPosition + 3 > 8) return false;
-            newState[blankPosition] = newState[blankPosition+3];
-            newState[blankPosition+3] = BLANK_TILE;
+         case LEFT: {
+            if (blankPosition == 0 || blankPosition == 3 || blankPosition == 6) return false;
+            newState[blankPosition] = newState[blankPosition-1];
+            newState[blankPosition-1] = BLANK_TILE;
             return true;
             break;
         }
@@ -62,10 +67,10 @@ bool move8(char* state, moveTo movement, int blankPosition, char* newState) {
             return true;
             break;
         }
-        case LEFT: {
-            if (blankPosition == 0 || blankPosition == 3 || blankPosition == 6) return false;
-            newState[blankPosition] = newState[blankPosition-1];
-            newState[blankPosition-1] = BLANK_TILE;
+        case DOWN: {
+            if (blankPosition + 3 > 8) return false;
+            newState[blankPosition] = newState[blankPosition+3];
+            newState[blankPosition+3] = BLANK_TILE;
             return true;
             break;
         }

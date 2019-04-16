@@ -10,6 +10,7 @@
 // Algorithms implemented
 int bfs(char *init);
 int idfs(char *init);
-int dfs(char *init);
+// int depthLimitedSearch(char *init, char *father, int depthLimited);
+int idfs(char *init);
 
 #endif

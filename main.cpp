@@ -15,7 +15,7 @@ void callAlgorithm(int algID, char* init) {
             break;
 
         case IDFS:
-            dfs(init);
+            idfs(init);
             break;
 
         case ASTAR:

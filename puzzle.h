@@ -23,6 +23,7 @@ typedef struct
 
 
 bool isGoal(char *state);
+bool compareState(char *state, char *state2);
 void printState(char* state);
 PUZZLE_STATE makeNode(char* state, int h);
 bool move8(char* state, moveTo movement, int blankPosition, char* newState);
