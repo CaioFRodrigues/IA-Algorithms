@@ -57,7 +57,8 @@ int main(int argc, char *argv[]) {
         
         char state[puzzleSize];
         createState(argv+inputPosition, puzzleSize, state);
-        callAlgorithm(algID, state);
+        //callAlgorithm(algID, state);
+        cout << makeNode(state, 3).h;
 
         if(argc == nextPuzzleLimit)
             endOfInput = true;

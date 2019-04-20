@@ -34,10 +34,10 @@ void printState(char* state) {
 
 
 // given a state and heuristic value, return the puzzle state with this information
-PUZZLE_STATE makeNode(char* state, int h) {
+PUZZLE_STATE makeNode(char* state, int puzzleRoot) {
     PUZZLE_STATE puzzleState;
     memcpy(puzzleState.state, state, sizeof(puzzleState.state));
-    puzzleState.h = h;
+    puzzleState.h = heuristic(puzzleState, puzzleRoot);
     return puzzleState;
 }
 
@@ -120,4 +120,28 @@ string stateToString(char* state) {
     for (int i = 0; i < 9; i++)
         stateString += state[i]+48;
     return stateString;
+}
+
+//Calculates the heuristic value from a single state
+int heuristic(PUZZLE_STATE puzzle, int puzzleRoot){
+    int h = 0;
+    for(int i = 0; i < puzzleRoot * puzzleRoot; i++){
+        h += getMarcoPoloDistance(i, (int) puzzle.state[i], puzzleRoot);
+    }
+    return h;
+}
+
+int getMarcoPoloDistance(int currentPosition, int desiredPosition, int puzzleRoot){
+    int verticalDistance = abs(getVerticalPosition(currentPosition, puzzleRoot) - getVerticalPosition(desiredPosition, puzzleRoot));
+    int horizontalDistance = abs(getHorizontalPosition(currentPosition, puzzleRoot) - getHorizontalPosition(desiredPosition, puzzleRoot));
+    cout <<"H: "<<currentPosition <<" V: " << currentPosition % puzzleRoot << endl;
+    return verticalDistance + horizontalDistance;
+}
+
+int getVerticalPosition(int pos, int puzzleRoot){
+    return pos/puzzleRoot;
+}
+
+int getHorizontalPosition(int pos, int puzzleRoot){
+    return pos % puzzleRoot;
 }
