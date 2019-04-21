@@ -94,23 +94,23 @@ list<PUZZLE_STATE> succ(char* state) {
     PUZZLE_STATE puzzleStateLEFT;
     PUZZLE_STATE puzzleStateRIGHT;
     if (puzzleSize == 9) {
-<<<<<<< HEAD
         if (blankPosition - 3 >= 0) {
             move8(state, UP, blankPosition, puzzleStateUP.state);
-=======
-        if (move8(state, UP, blankPosition, puzzleStateUP.state)) {
-            
             succs.push_back(puzzleStateUP);
         }
-        if (move8(state, DOWN, blankPosition, puzzleStateDOWN.state)) {
-            succs.push_back(puzzleStateDOWN);
-        }
-        if (move8(state, LEFT, blankPosition, puzzleStateLEFT.state)) {
+        if (blankPosition != 0 && blankPosition != 3 && blankPosition != 6) {
+            move8(state, LEFT, blankPosition, puzzleStateLEFT.state);
             succs.push_back(puzzleStateLEFT);
         }
-        if (move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state)) {
-            succs.push_back(puzzleStateRIGHT);
+        if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
+            move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
+            succs.push_back(puzzleStateLEFT);
         }
+        if (blankPosition + 3 <= 8) {
+            move8(state, DOWN, blankPosition, puzzleStateDOWN.state);
+            succs.push_back(puzzleStateDOWN);
+        }
+
     }
 
     return succs;
@@ -131,39 +131,28 @@ list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot) {
     PUZZLE_STATE puzzleStateRIGHT;
 
     if (puzzleSize == 9) {
-        if (move8(state, UP, blankPosition, puzzleStateUP.state)) {
+        if (blankPosition - 3 >= 0) {
+            move8(state, UP, blankPosition, puzzleStateUP.state);
             puzzleStateUP.g = g;
             puzzleStateUP.h = heuristic(puzzleStateUP, puzzleRoot);
->>>>>>> 51f99ff31d4c82de68c6619898dd20746e0f250d
             succs.push_back(puzzleStateUP);
-
         }
-<<<<<<< HEAD
         if (blankPosition != 0 && blankPosition != 3 && blankPosition != 6) {
             move8(state, LEFT, blankPosition, puzzleStateLEFT.state);
-            succs.push_back(puzzleStateLEFT);
-        }
-        if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
-            move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
-=======
-        if (move8(state, DOWN, blankPosition, puzzleStateDOWN.state)) {
-            puzzleStateDOWN.g = g;
-            puzzleStateDOWN.h = heuristic(puzzleStateDOWN, puzzleRoot);
-            succs.push_back(puzzleStateDOWN);
-        }
-        if (move8(state, LEFT, blankPosition, puzzleStateLEFT.state)) {
             puzzleStateLEFT.g = g;
             puzzleStateLEFT.h = heuristic(puzzleStateLEFT, puzzleRoot);
             succs.push_back(puzzleStateLEFT);
         }
-        if (move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state)) {
+        if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
+            move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
             puzzleStateRIGHT.g = g;
             puzzleStateRIGHT.h = heuristic(puzzleStateRIGHT, puzzleRoot);
->>>>>>> 51f99ff31d4c82de68c6619898dd20746e0f250d
             succs.push_back(puzzleStateRIGHT);
         }
         if (blankPosition + 3 <= 8) {
             move8(state, DOWN, blankPosition, puzzleStateDOWN.state);
+            puzzleStateDOWN.g = g;
+            puzzleStateDOWN.h = heuristic(puzzleStateDOWN, puzzleRoot);
             succs.push_back(puzzleStateDOWN);
         }
     }
