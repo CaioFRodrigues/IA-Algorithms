@@ -21,14 +21,26 @@ typedef struct
 } PUZZLE_STATE;
 
 
+void printState(char* state);
+string stateToString(char* state);
 
+PUZZLE_STATE makeNode(char* state, int puzzleSize);
+
+//Check functions
 bool isGoal(char *state);
 bool compareState(char *state, char *state2);
-void printState(char* state);
-PUZZLE_STATE makeNode(char* state, int h);
-bool move8(char* state, moveTo movement, int blankPosition, char* newState);
 int getBlankPosition(char* state, int puzzleSize);
+
+//Move Functions
+bool move8(char* state, moveTo movement, int blankPosition, char* newState);
 list<PUZZLE_STATE> succ(char* state);
-string stateToString(char* state);
+
+//Heuristic functions
+int heuristic(PUZZLE_STATE puzzle, int puzzle_size);
+int getMarcoPoloDistance(int currentPosition, int desiredPosition, int puzzle_size);
+int getHorizontalPosition(int pos, int puzzle_size);
+int getVerticalPosition(int pos, int puzzle_size);
+
+
 
 #endif

@@ -15,7 +15,7 @@ int bfs(char *init) {
     }
 
     deque<PUZZLE_STATE> open;
-    open.push_back(makeNode(init, 0));
+    open.push_back(makeNode(init, 9));
     
     unordered_set<string> closed;
     closed.insert(stateToString(init));
@@ -26,7 +26,7 @@ int bfs(char *init) {
         list<PUZZLE_STATE> succs = succ(n.state);
         numNodesExpanded++;
         for (list<PUZZLE_STATE>::iterator it = succs.begin(); it != succs.end(); ++it) {
-            PUZZLE_STATE nChild = makeNode(it->state, 0);
+            PUZZLE_STATE nChild = makeNode(it->state, 9);
             if (isGoal(nChild.state)) {
                 auto end = steady_clock::now();
                 solutionTime = (int) duration_cast<milliseconds>(end-start).count();
@@ -78,4 +78,10 @@ int idfs(char *init) {
     auto end = steady_clock::now();
     solutionTime = (int) duration_cast<milliseconds>(end-start).count();
     cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
+}
+
+
+int astar(char *init){
+    
+
 }
