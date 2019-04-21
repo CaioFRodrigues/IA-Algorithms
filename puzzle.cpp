@@ -38,8 +38,12 @@ PUZZLE_STATE makeNode(char* state, int puzzleRoot) {
     PUZZLE_STATE puzzleState;
     memcpy(puzzleState.state, state, sizeof(puzzleState.state));
     puzzleState.h = heuristic(puzzleState, puzzleRoot);
+    puzzleState.g = 0;
     return puzzleState;
 }
+
+
+
 
 // given the actual state, a movement and the blank position, return the new state after the movement
 bool move8(char* state, moveTo movement, int blankPosition, char* newState) {
@@ -90,16 +94,72 @@ list<PUZZLE_STATE> succ(char* state) {
     PUZZLE_STATE puzzleStateLEFT;
     PUZZLE_STATE puzzleStateRIGHT;
     if (puzzleSize == 9) {
+<<<<<<< HEAD
         if (blankPosition - 3 >= 0) {
             move8(state, UP, blankPosition, puzzleStateUP.state);
+=======
+        if (move8(state, UP, blankPosition, puzzleStateUP.state)) {
+            
             succs.push_back(puzzleStateUP);
         }
+        if (move8(state, DOWN, blankPosition, puzzleStateDOWN.state)) {
+            succs.push_back(puzzleStateDOWN);
+        }
+        if (move8(state, LEFT, blankPosition, puzzleStateLEFT.state)) {
+            succs.push_back(puzzleStateLEFT);
+        }
+        if (move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state)) {
+            succs.push_back(puzzleStateRIGHT);
+        }
+    }
+
+    return succs;
+}
+
+// given a state, return a list of successors states with g and h calculated
+list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot) {
+    char* state = puzzle.state;
+    int g = puzzle.g + 1;
+
+    list<PUZZLE_STATE> succs;
+    int puzzleSize = puzzleRoot * puzzleRoot;
+    int blankPosition = getBlankPosition(state, puzzleSize);
+
+    PUZZLE_STATE puzzleStateUP;
+    PUZZLE_STATE puzzleStateDOWN;
+    PUZZLE_STATE puzzleStateLEFT;
+    PUZZLE_STATE puzzleStateRIGHT;
+
+    if (puzzleSize == 9) {
+        if (move8(state, UP, blankPosition, puzzleStateUP.state)) {
+            puzzleStateUP.g = g;
+            puzzleStateUP.h = heuristic(puzzleStateUP, puzzleRoot);
+>>>>>>> 51f99ff31d4c82de68c6619898dd20746e0f250d
+            succs.push_back(puzzleStateUP);
+
+        }
+<<<<<<< HEAD
         if (blankPosition != 0 && blankPosition != 3 && blankPosition != 6) {
             move8(state, LEFT, blankPosition, puzzleStateLEFT.state);
             succs.push_back(puzzleStateLEFT);
         }
         if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
             move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
+=======
+        if (move8(state, DOWN, blankPosition, puzzleStateDOWN.state)) {
+            puzzleStateDOWN.g = g;
+            puzzleStateDOWN.h = heuristic(puzzleStateDOWN, puzzleRoot);
+            succs.push_back(puzzleStateDOWN);
+        }
+        if (move8(state, LEFT, blankPosition, puzzleStateLEFT.state)) {
+            puzzleStateLEFT.g = g;
+            puzzleStateLEFT.h = heuristic(puzzleStateLEFT, puzzleRoot);
+            succs.push_back(puzzleStateLEFT);
+        }
+        if (move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state)) {
+            puzzleStateRIGHT.g = g;
+            puzzleStateRIGHT.h = heuristic(puzzleStateRIGHT, puzzleRoot);
+>>>>>>> 51f99ff31d4c82de68c6619898dd20746e0f250d
             succs.push_back(puzzleStateRIGHT);
         }
         if (blankPosition + 3 <= 8) {
@@ -123,13 +183,12 @@ int heuristic(PUZZLE_STATE puzzle, int puzzleRoot){
     for(int i = 0; i < puzzleRoot * puzzleRoot; i++){
         h += getMarcoPoloDistance(i, (int) puzzle.state[i], puzzleRoot);
     }
-    return h;
+    return h/2;
 }
 
 int getMarcoPoloDistance(int currentPosition, int desiredPosition, int puzzleRoot){
     int verticalDistance = abs(getVerticalPosition(currentPosition, puzzleRoot) - getVerticalPosition(desiredPosition, puzzleRoot));
     int horizontalDistance = abs(getHorizontalPosition(currentPosition, puzzleRoot) - getHorizontalPosition(desiredPosition, puzzleRoot));
-    cout <<"H: "<<currentPosition <<" V: " << currentPosition % puzzleRoot << endl;
     return verticalDistance + horizontalDistance;
 }
 
@@ -139,4 +198,14 @@ int getVerticalPosition(int pos, int puzzleRoot){
 
 int getHorizontalPosition(int pos, int puzzleRoot){
     return pos % puzzleRoot;
+}
+
+int getPuzzleRoot(int puzzleSize){
+    if(puzzleSize == 9)
+        return 3;
+    else if (puzzleSize == 16)
+        return 4;
+
+
+    return -1;
 }

@@ -7,7 +7,7 @@
 #include "puzzle.h"
 #include "input.h"
 
-void callAlgorithm(int algID, char* init) {
+void callAlgorithm(int algID, char* init, int puzzleSize) {
     switch (algID)
     {
         case BFS:
@@ -19,7 +19,7 @@ void callAlgorithm(int algID, char* init) {
             break;
 
         case ASTAR:
-            cout << "Não implementado ainda";
+            astar(init, puzzleSize);
             break;
 
         case IDASTAR:
@@ -58,8 +58,8 @@ int main(int argc, char *argv[]) {
         
         char state[puzzleSize];
         createState(argv+inputPosition, puzzleSize, state);
-        //callAlgorithm(algID, state);
-        cout << makeNode(state, 3).h;
+        callAlgorithm(algID, state, puzzleSize);
+        //cout << heuristic(makeNode(state, getPuzzleRoot(puzzleSize)), getPuzzleRoot(puzzleSize));
 
         if(argc == nextPuzzleLimit)
             endOfInput = true;

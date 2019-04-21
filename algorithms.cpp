@@ -2,8 +2,11 @@
 #include <unordered_set>
 #include <chrono>
 #include <iostream>
+#include <set>
+#include <map>
 #include "algorithms.h"
 
+using namespace std;
 using namespace std::chrono;
 
 // Breadth-First Search Algorithm 
@@ -39,6 +42,7 @@ int bfs(char *init) {
                 closed.insert(stateString);
                 open.push_back(nChild);
             }
+            
         }
     }
     auto end = steady_clock::now();
@@ -81,7 +85,45 @@ int idfs(char *init) {
 }
 
 
-int astar(char *init){
+int astar(char *init, int puzzleSize){
+    multiset<PUZZLE_STATE,cmp> open;
+    open.insert(makeNode(init, getPuzzleRoot(puzzleSize)));
+    map<string, int> distances;
+
+
+    while(!open.empty()){
+        cout <<"Looping \n";
+        multiset<PUZZLE_STATE,cmp>::iterator it = open.begin();
+        PUZZLE_STATE currentPuzzle = *it;
+        open.erase(it);
+        string stateString= stateToString(currentPuzzle.state);
+        printState(currentPuzzle.state);
+        if (distances.find(stateString) == distances.end() || currentPuzzle.g < distances[stateString]){ //Short-circuit, be careful changing this
+            distances[stateString] = currentPuzzle.g;
+            
+            if(isGoal(currentPuzzle.state)){
+                cout << "GOAL" << endl;
+                printState(currentPuzzle.state);
+                return currentPuzzle.g;
+            }
+
+            list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize));
+            for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
+                cout <<"New state generated -> H: " << iter->h << " G:" << iter->g << endl;
+                printState(iter->state);
+                cout <<"INSERTED - SIZE OF SET BEFORE: " << open.size() << endl;
+                open.insert(*iter); //No need to check if it is infinite because it will never be
+                cout <<"INSERTED - SIZE OF SET AFTER: " << open.size() << endl << endl;
+            }
+
+
+        }
+        else{
+            cout <<"SKIPPED - SIZE OF SET: " << open.size() << endl;
+        }
+
+    }
+
     
 
 }

@@ -18,13 +18,14 @@ typedef struct
 {
     char state[9];
     int h;
+    int g;
 } PUZZLE_STATE;
 
 
 void printState(char* state);
 string stateToString(char* state);
 
-PUZZLE_STATE makeNode(char* state, int puzzleSize);
+PUZZLE_STATE makeNode(char* state, int puzzleRoot);
 
 //Check functions
 bool isGoal(char *state);
@@ -34,12 +35,17 @@ int getBlankPosition(char* state, int puzzleSize);
 //Move Functions
 bool move8(char* state, moveTo movement, int blankPosition, char* newState);
 list<PUZZLE_STATE> succ(char* state);
+list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot); 
 
 //Heuristic functions
-int heuristic(PUZZLE_STATE puzzle, int puzzle_size);
-int getMarcoPoloDistance(int currentPosition, int desiredPosition, int puzzle_size);
-int getHorizontalPosition(int pos, int puzzle_size);
-int getVerticalPosition(int pos, int puzzle_size);
+int heuristic(PUZZLE_STATE puzzle, int puzzleRoot);
+int getMarcoPoloDistance(int currentPosition, int desiredPosition, int puzzleRoot);
+int getHorizontalPosition(int pos, int puzzleRoot);
+int getVerticalPosition(int pos, int puzzleRoot);
+int getPuzzleRoot(int puzzleSize);
+
+//Sorted list functor
+
 
 
 
