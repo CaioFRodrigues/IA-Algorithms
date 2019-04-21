@@ -47,35 +47,27 @@ bool move8(char* state, moveTo movement, int blankPosition, char* newState) {
     switch (movement)
     {
         case UP: {
-            if (blankPosition - 3 < 0) return false; //TODO: Remove if speed is needed
             newState[blankPosition] = newState[blankPosition-3];
             newState[blankPosition-3] = BLANK_TILE;
-            return true;
             break;
         }
          case LEFT: {
-            if (blankPosition == 0 || blankPosition == 3 || blankPosition == 6) return false;
             newState[blankPosition] = newState[blankPosition-1];
             newState[blankPosition-1] = BLANK_TILE;
-            return true;
             break;
         }
         case RIGHT: {
-            if (blankPosition == 2 || blankPosition == 5  || blankPosition == 8) return false;
             newState[blankPosition] = newState[blankPosition+1];
             newState[blankPosition+1] = BLANK_TILE;
-            return true;
             break;
         }
         case DOWN: {
-            if (blankPosition + 3 > 8) return false;
             newState[blankPosition] = newState[blankPosition+3];
             newState[blankPosition+3] = BLANK_TILE;
-            return true;
             break;
         }
         default:
-            return false;
+            break;
     }
 }
 // given a state and the puzzleSize, return the position of blank tile
@@ -98,20 +90,23 @@ list<PUZZLE_STATE> succ(char* state) {
     PUZZLE_STATE puzzleStateLEFT;
     PUZZLE_STATE puzzleStateRIGHT;
     if (puzzleSize == 9) {
-        if (move8(state, UP, blankPosition, puzzleStateUP.state)) {
+        if (blankPosition - 3 >= 0) {
+            move8(state, UP, blankPosition, puzzleStateUP.state);
             succs.push_back(puzzleStateUP);
         }
-        if (move8(state, DOWN, blankPosition, puzzleStateDOWN.state)) {
-            succs.push_back(puzzleStateDOWN);
-        }
-        if (move8(state, LEFT, blankPosition, puzzleStateLEFT.state)) {
+        if (blankPosition != 0 && blankPosition != 3 && blankPosition != 6) {
+            move8(state, LEFT, blankPosition, puzzleStateLEFT.state);
             succs.push_back(puzzleStateLEFT);
         }
-        if (move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state)) {
+        if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
+            move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
             succs.push_back(puzzleStateRIGHT);
         }
+        if (blankPosition + 3 <= 8) {
+            move8(state, DOWN, blankPosition, puzzleStateDOWN.state);
+            succs.push_back(puzzleStateDOWN);
+        }
     }
-
     return succs;
 }
 

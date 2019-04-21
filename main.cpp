@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
         int puzzleSize = nextPuzzleLimit - inputPosition;
 
         if(!isSizeValid(puzzleSize)) {
+            cout << puzzleSize << endl;
             cout << "Error - Wrong size";
             return -1;
         }

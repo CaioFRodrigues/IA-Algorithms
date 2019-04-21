@@ -9,10 +9,8 @@ using namespace std::chrono;
 // Breadth-First Search Algorithm 
 int bfs(char *init) {
     auto start = steady_clock::now();
-    int numNodesExpanded = 0, optimalSolutionLen = 0, solutionTime = 0, averageHeuristic = 0, initialHeuristic = 0;
+    int numNodesExpanded = 0, optimalSolutionLen = 0, solutionTime = 0;
     if (isGoal(init)) {
-        cout << "GOAL" << endl;
-        printState(init);
         return 1;
     }
 
@@ -32,7 +30,7 @@ int bfs(char *init) {
             if (isGoal(nChild.state)) {
                 auto end = steady_clock::now();
                 solutionTime = (int) duration_cast<milliseconds>(end-start).count();
-                cout << numNodesExpanded << "," << optimalSolutionLen << "," << solutionTime << "," << averageHeuristic << "," << initialHeuristic << endl;
+                cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
                 return 1;            
             }
             string stateString = stateToString(nChild.state);
@@ -43,13 +41,15 @@ int bfs(char *init) {
             }
         }
     }
+    auto end = steady_clock::now();
+    solutionTime = (int) duration_cast<milliseconds>(end-start).count();
+    cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
+    cout << "unsolvable" << endl;
     return 0;
 }
 
 int depthLimitedSearch(char *init, char *father, int depthLimited) {
     if (isGoal(init)) {
-        cout << endl << endl << "GOAL" << endl;
-        printState(init);
         return 1;            
     }
 
@@ -66,11 +66,16 @@ int depthLimitedSearch(char *init, char *father, int depthLimited) {
     return 0;
 }
 
-int idfs(char *init) { 
+int idfs(char *init) {
+    auto start = steady_clock::now();
+    int numNodesExpanded = 0, optimalSolutionLen = 0, solutionTime = 0;
     int depthLimited = 1;
     int solution = 0;
     while(!solution){
         solution = depthLimitedSearch(init, NULL, depthLimited);
         depthLimited++;
     }
+    auto end = steady_clock::now();
+    solutionTime = (int) duration_cast<milliseconds>(end-start).count();
+    cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
 }
