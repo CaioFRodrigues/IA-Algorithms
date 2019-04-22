@@ -27,7 +27,7 @@ void callAlgorithm(int algID, char* init, int puzzleSize) {
             break;
 
         case GBFS:
-            cout << "Não implementado ainda";
+            gbfs(init, puzzleSize);
             break;
 
         default:
