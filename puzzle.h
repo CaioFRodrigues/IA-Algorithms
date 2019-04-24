@@ -25,7 +25,8 @@ typedef struct
 void printState(char* state);
 string stateToString(char* state);
 
-PUZZLE_STATE makeNode(char* state, int puzzleRoot);
+PUZZLE_STATE makeNodeHeuristic(char* state, int puzzleRoot);
+PUZZLE_STATE makeNode(char* state);
 
 //Check functions
 bool isGoal(char *state);
@@ -34,7 +35,7 @@ int getBlankPosition(char* state, int puzzleSize);
 
 //Move Functions
 bool move8(char* state, moveTo movement, int blankPosition, char* newState);
-list<PUZZLE_STATE> succ(char* state);
+list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle);
 list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot); 
 
 //Heuristic functions

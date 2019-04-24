@@ -34,7 +34,7 @@ void printState(char* state) {
 
 
 // given a state and heuristic value, return the puzzle state with this information
-PUZZLE_STATE makeNode(char* state, int puzzleRoot) {
+PUZZLE_STATE makeNodeHeuristic(char* state, int puzzleRoot) {
     PUZZLE_STATE puzzleState;
     memcpy(puzzleState.state, state, sizeof(puzzleState.state));
     puzzleState.h = heuristic(puzzleState, puzzleRoot);
@@ -42,8 +42,13 @@ PUZZLE_STATE makeNode(char* state, int puzzleRoot) {
     return puzzleState;
 }
 
-
-
+PUZZLE_STATE makeNode(char* state) {
+    PUZZLE_STATE puzzleState;
+    memcpy(puzzleState.state, state, sizeof(puzzleState.state));
+    puzzleState.h = 0;
+    puzzleState.g = 0;
+    return puzzleState;
+}
 
 // given the actual state, a movement and the blank position, return the new state after the movement
 bool move8(char* state, moveTo movement, int blankPosition, char* newState) {
@@ -85,34 +90,38 @@ int getBlankPosition(char* state, int puzzleSize) {
 
 
 // given a state, return a list of successors states
-list<PUZZLE_STATE> succ(char* state) {
+list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle) {
+    char* state = puzzle.state;
+    int g = puzzle.g + 1;
+
     list<PUZZLE_STATE> succs;
-    int puzzleSize = 9;
-    int blankPosition = getBlankPosition(state, puzzleSize);
+    int blankPosition = getBlankPosition(state, 9);
+
     PUZZLE_STATE puzzleStateUP;
     PUZZLE_STATE puzzleStateDOWN;
     PUZZLE_STATE puzzleStateLEFT;
     PUZZLE_STATE puzzleStateRIGHT;
-    if (puzzleSize == 9) {
-        if (blankPosition - 3 >= 0) {
-            move8(state, UP, blankPosition, puzzleStateUP.state);
-            succs.push_back(puzzleStateUP);
-        }
-        if (blankPosition != 0 && blankPosition != 3 && blankPosition != 6) {
-            move8(state, LEFT, blankPosition, puzzleStateLEFT.state);
-            succs.push_back(puzzleStateLEFT);
-        }
-        if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
-            move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
-            succs.push_back(puzzleStateLEFT);
-        }
-        if (blankPosition + 3 <= 8) {
-            move8(state, DOWN, blankPosition, puzzleStateDOWN.state);
-            succs.push_back(puzzleStateDOWN);
-        }
 
+    if (blankPosition - 3 >= 0) {
+        move8(state, UP, blankPosition, puzzleStateUP.state);
+        puzzleStateUP.g = g;
+        succs.push_back(puzzleStateUP);
     }
-
+    if (blankPosition != 0 && blankPosition != 3 && blankPosition != 6) {
+        move8(state, LEFT, blankPosition, puzzleStateLEFT.state);
+        puzzleStateLEFT.g = g;
+        succs.push_back(puzzleStateLEFT);
+    }
+    if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
+        move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
+        puzzleStateRIGHT.g = g;
+        succs.push_back(puzzleStateRIGHT);
+    }
+    if (blankPosition + 3 <= 8) {
+        move8(state, DOWN, blankPosition, puzzleStateDOWN.state);
+        puzzleStateDOWN.g = g;
+        succs.push_back(puzzleStateDOWN);
+    }
     return succs;
 }
 
