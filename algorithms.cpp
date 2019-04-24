@@ -24,6 +24,7 @@ void writeCsv(string filename, string line) {
 int bfs(char *init) {
     auto start = steady_clock::now();
     int optimalSolutionLen = 0, solutionTime = 0;
+    numNodesExpanded = 0;
 
     if (isGoal(init)) {
         auto end = steady_clock::now();
@@ -98,6 +99,7 @@ int idfs(char *init) {
     int optimalSolutionLen = 0, solutionTime = 0;
     int depthLimited = 1;
     int solution = -1;
+    numNodesExpanded = 0;
 
     PUZZLE_STATE initialPuzzle = makeNode(init);
     while(solution == -1){
@@ -114,8 +116,14 @@ int idfs(char *init) {
 
 
 int astar(char *init, int puzzleSize) {
+    auto start = steady_clock::now();
+    int optimalSolutionLen = 0, solutionTime = 0;
+    numNodesExpanded = 0;
+
     multiset<PUZZLE_STATE, cmpASTAR> open;
-    open.insert(makeNodeHeuristic(init, getPuzzleRoot(puzzleSize)));
+    PUZZLE_STATE initialPuzzle = makeNodeHeuristic(init, getPuzzleRoot(puzzleSize));
+    int heuristicInitial = initialPuzzle.h;
+    open.insert(initialPuzzle);
     map<string, int> distances;
 
     while(!open.empty()){
@@ -127,9 +135,16 @@ int astar(char *init, int puzzleSize) {
             distances[stateString] = currentPuzzle.g;
             
             if(isGoal(currentPuzzle.state)){
+                auto end = steady_clock::now();
+                solutionTime = (int) duration_cast<milliseconds>(end-start).count();
+                optimalSolutionLen = currentPuzzle.g;
+                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + ",-," + to_string(heuristicInitial);
+                cout << output << endl;
+                if (writeInCsv) writeCsv("astar.csv", output);
                 return currentPuzzle.g;
             }
 
+            numNodesExpanded++;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize));
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
                 open.insert(*iter); //No need to check if it is infinite because it will never be

@@ -5,16 +5,16 @@
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         printf("Inform the algorithm:\n");
-        printf("-bfs -idfs -astar -idastar -gfs\n");
+        printf("-bfs -idfs -astar -idastar -gbfs\n");
         return 1;
     }
 
-    char const* const fileName = "instances8.txt"; /* should check that argc > 1 */
+    char const* const fileName = "8puzzle_instances.txt"; /* should check that argc > 1 */
     FILE* file = fopen(fileName, "r"); /* should check the result */
     char line[18];
 
     char programName[BUFSIZ];
-    strcpy(programName, "main.exe ");
+    strcpy(programName, "..\\main.exe ");
     strcat(programName, argv[1]);
     strcat(programName, " ");
 
