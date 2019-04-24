@@ -8,12 +8,12 @@
 
 using namespace std;
 using namespace std::chrono;
+int numNodesExpanded = 0;
 
 // Breadth-First Search Algorithm 
 int bfs(char *init) {
     auto start = steady_clock::now();
-    int numNodesExpanded = 0, optimalSolutionLen = 0, solutionTime = 0;
-    printState(init);
+    int optimalSolutionLen = 0, solutionTime = 0;
 
     if (isGoal(init)) {
         auto end = steady_clock::now();
@@ -58,36 +58,43 @@ int bfs(char *init) {
     return 0;
 }
 
-int depthLimitedSearch(char *init, char *father, int depthLimited) {
-    if (isGoal(init)) {
-        return 1;            
+// Depth Limited Search
+int depthLimitedSearch(PUZZLE_STATE currentPuzzle, char *father, int depthLimited) {
+    if (isGoal(currentPuzzle.state)) {
+        return currentPuzzle.g;
     }
 
     if (depthLimited > 0) {
-        list<PUZZLE_STATE> succs = succ(makeNode(init));
+        numNodesExpanded++;
+        list<PUZZLE_STATE> succs = succ(currentPuzzle);
         for (list<PUZZLE_STATE>::iterator it = succs.begin(); it != succs.end(); ++it) {
             if (!compareState(father, it->state)) {
-                int solution = depthLimitedSearch(it->state, init, depthLimited-1);
-                if (solution)
-                    return 1;
+                int solution = depthLimitedSearch(*it, currentPuzzle.state, depthLimited-1);
+                if (solution >= 0) {
+                    return solution;
+                }
             }
         }
     }
-    return 0;
+    return -1;
 }
 
+// Iterative Deepening
 int idfs(char *init) {
     auto start = steady_clock::now();
-    int numNodesExpanded = 0, optimalSolutionLen = 0, solutionTime = 0;
+    int optimalSolutionLen = 0, solutionTime = 0;
     int depthLimited = 1;
-    int solution = 0;
-    while(!solution){
-        solution = depthLimitedSearch(init, NULL, depthLimited);
+    int solution = -1;
+
+    PUZZLE_STATE initialPuzzle = makeNode(init);
+    while(solution == -1){
+        solution = depthLimitedSearch(initialPuzzle, NULL, depthLimited);
         depthLimited++;
     }
+    optimalSolutionLen = solution;
     auto end = steady_clock::now();
     solutionTime = (int) duration_cast<milliseconds>(end-start).count();
-    cout << numNodesExpanded << "," << optimalSolutionLen << "," << solutionTime << ",-,-" << endl;
+    cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
 }
 
 
