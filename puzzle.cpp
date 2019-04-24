@@ -199,3 +199,7 @@ int getPuzzleRoot(int puzzleSize){
 
     return -1;
 }
+
+int getF (PUZZLE_STATE node){
+    return node.h + node.g;
+}
