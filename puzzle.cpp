@@ -170,9 +170,10 @@ string stateToString(char* state) {
 int heuristic(PUZZLE_STATE puzzle, int puzzleRoot){
     int h = 0;
     for(int i = 0; i < puzzleRoot * puzzleRoot; i++){
-        h += getMarcoPoloDistance(i, (int) puzzle.state[i], puzzleRoot);
+        if((int)puzzle.state[i] != 0)
+            h += getMarcoPoloDistance(i, (int) puzzle.state[i], puzzleRoot);
     }
-    return h/2;
+    return h;
 }
 
 int getMarcoPoloDistance(int currentPosition, int desiredPosition, int puzzleRoot){
