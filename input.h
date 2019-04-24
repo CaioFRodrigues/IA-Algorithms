@@ -29,10 +29,8 @@ void createState(char **array, int size, char *state);
 //given a string, transforms its value into a char
 char getCharValue(char *string);
 
-
 int isCharDoubleDigit(char *string);
 
 bool isSizeValid(int size);
-
 
 #endif

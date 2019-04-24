@@ -4,11 +4,21 @@
 #include <iostream>
 #include <set>
 #include <map>
+#include <fstream>
+#include <string>
 #include "algorithms.h"
 
 using namespace std;
 using namespace std::chrono;
 int numNodesExpanded = 0;
+bool writeInCsv = false;
+
+void writeCsv(string filename, string line) {
+    ofstream csv;
+    csv.open (filename);
+    csv << line.c_str() << "\n";
+    csv.close();
+}
 
 // Breadth-First Search Algorithm 
 int bfs(char *init) {
@@ -18,8 +28,10 @@ int bfs(char *init) {
     if (isGoal(init)) {
         auto end = steady_clock::now();
         solutionTime = (int) duration_cast<milliseconds>(end-start).count();
-        cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
-        return 1;
+        string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + ",-,-";
+        cout << output << endl;
+        if (writeInCsv) writeCsv("bfs.csv", output);
+        return optimalSolutionLen;
     }
 
     deque<PUZZLE_STATE> open;
@@ -42,8 +54,10 @@ int bfs(char *init) {
                 auto end = steady_clock::now();
                 solutionTime = (int) duration_cast<milliseconds>(end-start).count();
                 optimalSolutionLen = nChild.g;
-                cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
-                return 1;            
+                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + ",-,-";
+                cout << output << endl;
+                if (writeInCsv) writeCsv("bfs.csv", output);
+                return optimalSolutionLen;            
             }
             
             string stateString = stateToString(nChild.state);
@@ -54,8 +68,7 @@ int bfs(char *init) {
             }
         }
     }
-    cout << "UNSOLVABLE" << endl;
-    return 0;
+    return -1;
 }
 
 // Depth Limited Search
@@ -94,7 +107,9 @@ int idfs(char *init) {
     optimalSolutionLen = solution;
     auto end = steady_clock::now();
     solutionTime = (int) duration_cast<milliseconds>(end-start).count();
-    cout << numNodesExpanded << "," << optimalSolutionLen << "," << (float) solutionTime/1000 << ",-,-" << endl;
+    string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + ",-,-";
+    cout << output << endl;
+    if (writeInCsv) writeCsv("idfs.csv", output);
 }
 
 
@@ -130,12 +145,10 @@ int gbfs(char *init, int puzzleSize){
     map<string, int> distances;
 
     while(!open.empty()){
-        // cout <<"Looping \n";
         multiset<PUZZLE_STATE,cmpGBFS>::iterator it = open.begin();
         PUZZLE_STATE currentPuzzle = *it;
         open.erase(it);
         string stateString = stateToString(currentPuzzle.state);
-        // printState(currentPuzzle.state);
         if (distances.find(stateString) == distances.end()){
             distances[stateString] = currentPuzzle.g;
             
@@ -147,7 +160,6 @@ int gbfs(char *init, int puzzleSize){
 
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize));
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
-                // printState(iter->state); 
                 open.insert(*iter); //No need to check if it is infinite because it will never be
             }
         }

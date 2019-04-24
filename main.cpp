@@ -59,7 +59,6 @@ int main(int argc, char *argv[]) {
         char state[puzzleSize];
         createState(argv+inputPosition, puzzleSize, state);
         callAlgorithm(algID, state, puzzleSize);
-        //cout << heuristic(makeNodeHeuristic(state, getPuzzleRoot(puzzleSize)), getPuzzleRoot(puzzleSize));
 
         if(argc == nextPuzzleLimit)
             endOfInput = true;
