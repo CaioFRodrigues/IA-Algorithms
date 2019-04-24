@@ -15,7 +15,7 @@ bool writeInCsv = false;
 
 void writeCsv(string filename, string line) {
     ofstream csv;
-    csv.open (filename);
+    csv.open (filename, ios_base::app);
     csv << line.c_str() << "\n";
     csv.close();
 }
