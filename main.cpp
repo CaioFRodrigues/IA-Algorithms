@@ -49,9 +49,7 @@ int main(int argc, char *argv[]) {
     while (!endOfInput) {
         int nextPuzzleLimit = getPuzzleLimit(argc, argv, inputPosition);    //nextPuzzleLimit always has the number for the end of 9 entries, not including the comma
         int puzzleSize = nextPuzzleLimit - inputPosition;
-
         if(!isSizeValid(puzzleSize)) {
-            cout << puzzleSize << endl;
             cout << "Error - Wrong size";
             return -1;
         }

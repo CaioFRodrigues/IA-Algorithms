@@ -36,7 +36,9 @@ char getPuzzleLimit(int argc, char **argv, int pos) {
 void createState(char **array, int size, char *state) {
     for(int i = 0; i < size; i++){
         state[i] = getCharValue(array[i]);
+        // printf("%d ", state[i]);
     }
+    printf("\n");
 }
 
 //given a string, transforms its value into a char

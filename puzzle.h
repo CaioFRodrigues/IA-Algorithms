@@ -16,21 +16,23 @@ enum moveTo
 
 typedef struct
 {
-    char state[9];
+    char state[16];
     int h;
     int g;
 } PUZZLE_STATE;
 
 
 void printState(char* state);
-string stateToString(char* state);
+void printState15(char* state);
+string stateToString(char* state, int puzzleSize);
 
 PUZZLE_STATE makeNodeHeuristic(char* state, int puzzleRoot);
 PUZZLE_STATE makeNode(char* state);
 
 //Check functions
 bool isGoal(char *state);
-bool compareState(char *state, char *state2);
+bool isGoal(char *state, int puzzleSize);
+bool compareState(char *state, char *state2, int stateSize);
 int getBlankPosition(char* state, int puzzleSize);
 
 //Move Functions

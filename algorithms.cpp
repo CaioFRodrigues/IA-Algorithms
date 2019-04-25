@@ -42,7 +42,7 @@ int bfs(char *init) {
     open.push_back(makeNode(init));
     
     unordered_set<string> closed;
-    closed.insert(stateToString(init));
+    closed.insert(stateToString(init, 9));
     
     while(!open.empty()) {
         PUZZLE_STATE currentPuzzle = open.front();
@@ -64,7 +64,7 @@ int bfs(char *init) {
                 return optimalSolutionLen;            
             }
             
-            string stateString = stateToString(nChild.state);
+            string stateString = stateToString(nChild.state, 9);
             unordered_set<string>::const_iterator found = closed.find(stateString);
             if (found == closed.end()) {
                 closed.insert(stateString);
@@ -85,7 +85,7 @@ int depthLimitedSearch(PUZZLE_STATE currentPuzzle, char *father, int depthLimite
         numNodesExpanded++;
         list<PUZZLE_STATE> succs = succ(currentPuzzle);
         for (list<PUZZLE_STATE>::iterator it = succs.begin(); it != succs.end(); ++it) {
-            if (!compareState(father, it->state)) {
+            if (!compareState(father, it->state, 9)) {
                 int solution = depthLimitedSearch(*it, currentPuzzle.state, depthLimited-1);
                 if (solution >= 0) {
                     return solution;
@@ -124,6 +124,7 @@ int astar(char *init, int puzzleSize) {
     numNodesExpanded = 0;
 
     multiset<PUZZLE_STATE, cmpASTAR> open;
+
     PUZZLE_STATE initialPuzzle = makeNodeHeuristic(init, getPuzzleRoot(puzzleSize));
     int heuristicInitial = initialPuzzle.h;
     open.insert(initialPuzzle);
@@ -133,11 +134,10 @@ int astar(char *init, int puzzleSize) {
         multiset<PUZZLE_STATE, cmpASTAR>::iterator it = open.begin();
         PUZZLE_STATE currentPuzzle = *it;
         open.erase(it);
-        string stateString= stateToString(currentPuzzle.state);
+        string stateString= stateToString(currentPuzzle.state, puzzleSize);    
         if (distances.find(stateString) == distances.end() || currentPuzzle.g < distances[stateString]){ //Short-circuit, be careful changing this
             distances[stateString] = currentPuzzle.g;
-            
-            if(isGoal(currentPuzzle.state)){
+            if(isGoal(currentPuzzle.state, puzzleSize)){
                 auto end = steady_clock::now();
                 solutionTime = (int) duration_cast<milliseconds>(end-start).count();
                 optimalSolutionLen = currentPuzzle.g;
@@ -146,7 +146,6 @@ int astar(char *init, int puzzleSize) {
                 if (writeInCsv) writeCsv("astar.csv", output);
                 return currentPuzzle.g;
             }
-
             numNodesExpanded++;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize));
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
@@ -220,7 +219,7 @@ int gbfs(char *init, int puzzleSize){
         multiset<PUZZLE_STATE,cmpGBFS>::iterator it = open.begin();
         PUZZLE_STATE currentPuzzle = *it;
         open.erase(it);
-        string stateString = stateToString(currentPuzzle.state);
+        string stateString = stateToString(currentPuzzle.state, 9);
         unordered_set<string>::const_iterator found = closed.find(stateString);
         if (found == closed.end()) {
             closed.insert(stateString);

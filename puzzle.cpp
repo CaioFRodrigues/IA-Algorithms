@@ -12,9 +12,16 @@ bool isGoal(char *state) {
     return memcmp(state, FINAL_STATE_8, sizeof(FINAL_STATE_8)) == 0;
 }
 
-bool compareState(char *state, char *state2) {
+bool isGoal(char *state, int puzzleSize) {
+    if (puzzleSize == 9)
+        return memcmp(state, FINAL_STATE_8, sizeof(FINAL_STATE_8)) == 0;
+    else
+        return memcmp(state, FINAL_STATE_15, sizeof(FINAL_STATE_15)) == 0;
+}
+
+bool compareState(char *state, char *state2, int stateSize) {
     if (state2 == NULL || state == NULL) return false;
-    return memcmp(state, state2, sizeof(state2)) == 0;
+    return memcmp(state, state2, stateSize) == 0;
 }
 
 void printState(char* state) {
@@ -32,11 +39,26 @@ void printState(char* state) {
     return;
 }
 
+void printState15(char* state) {
+    if (state == NULL) {
+        printf("NULL");
+        return;
+    }
+    for (int i = 0; i < 4; i++) {
+        for(int j = 0; j < 4; j++) {
+            printf("%d ", state[j + i * 4]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    return;
+}
+
 
 // given a state and heuristic value, return the puzzle state with this information
 PUZZLE_STATE makeNodeHeuristic(char* state, int puzzleRoot) {
     PUZZLE_STATE puzzleState;
-    memcpy(puzzleState.state, state, sizeof(puzzleState.state));
+    memcpy(puzzleState.state, state, puzzleRoot*puzzleRoot);
     puzzleState.h = heuristic(puzzleState, puzzleRoot);
     puzzleState.g = 0;
     return puzzleState;
@@ -44,7 +66,7 @@ PUZZLE_STATE makeNodeHeuristic(char* state, int puzzleRoot) {
 
 PUZZLE_STATE makeNode(char* state) {
     PUZZLE_STATE puzzleState;
-    memcpy(puzzleState.state, state, sizeof(puzzleState.state));
+    memcpy(puzzleState.state, state, 9);
     puzzleState.h = 0;
     puzzleState.g = 0;
     return puzzleState;
@@ -79,6 +101,37 @@ bool move8(char* state, moveTo movement, int blankPosition, char* newState) {
             break;
     }
 }
+
+// given the actual state, a movement and the blank position, return the new state after the movement
+bool move15(char* state, moveTo movement, int blankPosition, char* newState) {
+    memcpy(newState, state, 16);
+    switch (movement)
+    {
+        case UP: {
+            newState[blankPosition] = newState[blankPosition-4];
+            newState[blankPosition-4] = BLANK_TILE;
+            break;
+        }
+         case LEFT: {
+            newState[blankPosition] = newState[blankPosition-1];
+            newState[blankPosition-1] = BLANK_TILE;
+            break;
+        }
+        case RIGHT: {
+            newState[blankPosition] = newState[blankPosition+1];
+            newState[blankPosition+1] = BLANK_TILE;
+            break;
+        }
+        case DOWN: {
+            newState[blankPosition] = newState[blankPosition+4];
+            newState[blankPosition+4] = BLANK_TILE;
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 // given a state and the puzzleSize, return the position of blank tile
 int getBlankPosition(char* state, int puzzleSize) {
     int blankPosition;
@@ -164,13 +217,38 @@ list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot) {
             puzzleStateDOWN.h = heuristic(puzzleStateDOWN, puzzleRoot);
             succs.push_back(puzzleStateDOWN);
         }
+    } else {
+        if (blankPosition - 4 >= 0) {
+            move15(state, UP, blankPosition, puzzleStateUP.state);
+            puzzleStateUP.g = g;
+            puzzleStateUP.h = heuristic(puzzleStateUP, puzzleRoot);
+            succs.push_back(puzzleStateUP);
+        }
+        if (blankPosition != 0 && blankPosition != 4 && blankPosition != 8 && blankPosition != 12) {
+            move15(state, LEFT, blankPosition, puzzleStateLEFT.state);
+            puzzleStateLEFT.g = g;
+            puzzleStateLEFT.h = heuristic(puzzleStateLEFT, puzzleRoot);
+            succs.push_back(puzzleStateLEFT);
+        }
+        if (blankPosition != 3 && blankPosition != 7 && blankPosition != 11 && blankPosition != 15) {
+            move15(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
+            puzzleStateRIGHT.g = g;
+            puzzleStateRIGHT.h = heuristic(puzzleStateRIGHT, puzzleRoot);
+            succs.push_back(puzzleStateRIGHT);
+        }
+        if (blankPosition + 4 <= 15) {
+            move15(state, DOWN, blankPosition, puzzleStateDOWN.state);
+            puzzleStateDOWN.g = g;
+            puzzleStateDOWN.h = heuristic(puzzleStateDOWN, puzzleRoot);
+            succs.push_back(puzzleStateDOWN);
+        }
     }
     return succs;
 }
 
-string stateToString(char* state) {
+string stateToString(char* state, int puzzleSize) {
     string stateString = "";
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < puzzleSize; i++)
         stateString += state[i]+48;
     return stateString;
 }
@@ -178,7 +256,7 @@ string stateToString(char* state) {
 //Calculates the heuristic value from a single state
 int heuristic(PUZZLE_STATE puzzle, int puzzleRoot){
     int h = 0;
-    for(int i = 0; i < puzzleRoot * puzzleRoot; i++){
+    for(int i = 0; i < puzzleRoot*puzzleRoot; i++) {
         if((int)puzzle.state[i] != 0)
             h += getMarcoPoloDistance(i, (int) puzzle.state[i], puzzleRoot);
     }
