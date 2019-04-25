@@ -260,6 +260,8 @@ int heuristic(PUZZLE_STATE puzzle, int puzzleRoot){
         if((int)puzzle.state[i] != 0)
             h += getMarcoPoloDistance(i, (int) puzzle.state[i], puzzleRoot);
     }
+    // heuristicAcc += h;
+    // heuristicCount++;
     return h;
 }
 

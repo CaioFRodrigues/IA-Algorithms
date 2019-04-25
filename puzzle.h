@@ -21,6 +21,8 @@ typedef struct
     int g;
 } PUZZLE_STATE;
 
+// extern int heuristicAcc;
+// extern int heuristicCount;
 
 void printState(char* state);
 void printState15(char* state);
