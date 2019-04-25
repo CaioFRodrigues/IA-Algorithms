@@ -29,7 +29,7 @@ int idfs(char *init);
 // int depthLimitedSearch(char *init, char *father, int depthLimited);
 int astar(char *init, int puzzleSize);
 int gbfs(char *init, int puzzleSize);
-int idastar(char *init, int puzzleSize);
+int idastar(char *init);
 tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit);
 
 

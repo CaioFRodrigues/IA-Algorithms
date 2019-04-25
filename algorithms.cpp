@@ -159,19 +159,21 @@ int astar(char *init, int puzzleSize) {
 
 }
 
-int idastar(char *init, int puzzleSize){
-    int puzzleRoot = getPuzzleRoot(puzzleSize);
+int idastar(char *init){
+    int puzzleRoot = 3;
     PUZZLE_STATE node = makeNodeHeuristic(init, puzzleRoot);
     int limit = getF(node);
 
 
-
-    while(limit < -1){
+    while(limit > -1){
         tuple<int, PUZZLE_STATE> result = recursiveSearch(node, limit);
         limit = get<0>(result);
+        cout << limit << "\n";
 
-        if(isGoal(get<1>(result).state) == true)
+        if(isGoal(get<1>(result).state) == true){
+            printState(get<1>(result).state);
             return get<1>(result).g;
+        }
 
         
 
@@ -199,7 +201,7 @@ tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
             return make_tuple(-1, get<1>(solution));
         }
 
-        // nextLimit = min(nextLimit, get<0>(solution));
+        nextLimit = min(nextLimit, get<0>(solution));
     }
 
     return make_tuple(nextLimit, node);
