@@ -15,7 +15,7 @@
 using namespace std;
 using namespace std::chrono;
 int numNodesExpanded = 0;
-bool writeInCsv = false;
+bool writeInCsv = true;
 
 void writeCsv(string filename, string line) {
     ofstream csv;
@@ -121,7 +121,7 @@ int idfs(char *init) {
 
 int astar(char *init, int puzzleSize) {
     auto start = steady_clock::now();
-    int optimalSolutionLen = 0, solutionTime = 0;
+    int optimalSolutionLen = 0, solutionTime = 0, heuristicAcc = 0;
     numNodesExpanded = 0;
 
     multiset<PUZZLE_STATE, cmpASTAR> open;
@@ -142,12 +142,13 @@ int astar(char *init, int puzzleSize) {
                 auto end = steady_clock::now();
                 solutionTime = (int) duration_cast<milliseconds>(end-start).count();
                 optimalSolutionLen = currentPuzzle.g;
-                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + ",-," + to_string(heuristicInitial);
+                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + "," + to_string((float) heuristicAcc/numNodesExpanded) + "," + to_string(heuristicInitial);
                 cout << output << endl;
                 if (writeInCsv) writeCsv("astar.csv", output);
                 return currentPuzzle.g;
             }
             numNodesExpanded++;
+            heuristicAcc += currentPuzzle.h;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize));
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
                 open.insert(*iter); //No need to check if it is infinite because it will never be
@@ -214,7 +215,7 @@ tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
 
 int gbfs(char *init, int puzzleSize){
     auto start = steady_clock::now();
-    int optimalSolutionLen = 0, solutionTime = 0;
+    int optimalSolutionLen = 0, solutionTime = 0, heuristicAcc = 0;
     numNodesExpanded = 0;
 
     multiset<PUZZLE_STATE, cmpGBFS> open;
@@ -236,13 +237,14 @@ int gbfs(char *init, int puzzleSize){
                 auto end = steady_clock::now();
                 solutionTime = (int) duration_cast<milliseconds>(end-start).count();
                 optimalSolutionLen = currentPuzzle.g;
-                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + ",-," + to_string(heuristicInitial);
+                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + "," + to_string((float) heuristicAcc/numNodesExpanded) + "," + to_string(heuristicInitial);
                 cout << output << endl;
                 if (writeInCsv) writeCsv("gbfs.csv", output);
                 return currentPuzzle.g;
             }
 
             numNodesExpanded++;
+            heuristicAcc += currentPuzzle.h;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize));
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
                 open.insert(*iter); //No need to check if it is infinite because it will never be
