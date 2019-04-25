@@ -199,31 +199,43 @@ tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
             return make_tuple(-1, get<1>(solution));
         }
 
-        nextLimit = min(nextLimit, get<0>(solution));
+        // nextLimit = min(nextLimit, get<0>(solution));
     }
 
     return make_tuple(nextLimit, node);
 }
 
 int gbfs(char *init, int puzzleSize){
+    auto start = steady_clock::now();
+    int optimalSolutionLen = 0, solutionTime = 0;
+    numNodesExpanded = 0;
+
     multiset<PUZZLE_STATE, cmpGBFS> open;
-    open.insert(makeNodeHeuristic(init, getPuzzleRoot(puzzleSize)));
-    map<string, int> distances;
+    PUZZLE_STATE initialPuzzle = makeNodeHeuristic(init, getPuzzleRoot(puzzleSize));
+    int heuristicInitial = initialPuzzle.h;
+    open.insert(initialPuzzle);
+    unordered_set<string> closed;
 
     while(!open.empty()){
         multiset<PUZZLE_STATE,cmpGBFS>::iterator it = open.begin();
         PUZZLE_STATE currentPuzzle = *it;
         open.erase(it);
         string stateString = stateToString(currentPuzzle.state);
-        if (distances.find(stateString) == distances.end()){
-            distances[stateString] = currentPuzzle.g;
+        unordered_set<string>::const_iterator found = closed.find(stateString);
+        if (found == closed.end()) {
+            closed.insert(stateString);
             
-            if(isGoal(currentPuzzle.state)){
-                cout << "GOAL" << endl;
-                printState(currentPuzzle.state);
+            if(isGoal(currentPuzzle.state)) {
+                auto end = steady_clock::now();
+                solutionTime = (int) duration_cast<milliseconds>(end-start).count();
+                optimalSolutionLen = currentPuzzle.g;
+                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + ",-," + to_string(heuristicInitial);
+                cout << output << endl;
+                if (writeInCsv) writeCsv("gbfs.csv", output);
                 return currentPuzzle.g;
             }
 
+            numNodesExpanded++;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize));
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
                 open.insert(*iter); //No need to check if it is infinite because it will never be

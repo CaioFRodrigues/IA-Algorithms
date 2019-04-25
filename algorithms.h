@@ -9,7 +9,7 @@
 
 struct cmpGBFS {
     bool operator() (PUZZLE_STATE a, PUZZLE_STATE b) const {
-        return a.h < b.h;
+        return a.h <= b.h;
     }
 };
 
