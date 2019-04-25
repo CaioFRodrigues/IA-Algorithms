@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string>
 #include <tuple>
+
 #include "algorithms.h"
 
 
@@ -159,18 +160,22 @@ int astar(char *init, int puzzleSize) {
 }
 
 int idastar(char *init){
+    numNodesExpanded = 0;
+
     int puzzleRoot = 3;
     PUZZLE_STATE node = makeNodeHeuristic(init, puzzleRoot);
     int limit = getF(node);
-
+    auto start = steady_clock::now();
 
     while(limit > -1){
         tuple<int, PUZZLE_STATE> result = recursiveSearch(node, limit);
         limit = get<0>(result);
-        cout << limit << "\n";
 
         if(isGoal(get<1>(result).state) == true){
-            printState(get<1>(result).state);
+            auto end = steady_clock::now();
+            auto solutionTime = (int) duration_cast<milliseconds>(end-start).count();
+            string output = to_string(numNodesExpanded) + "," + to_string(get<1>(result).g) + "," + to_string((float) solutionTime/1000) + ",-,-";
+            cout << output << endl;
             return get<1>(result).g;
         }
 
@@ -193,6 +198,7 @@ tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
     int nextLimit = 2147483647; //highest int
 
     list<PUZZLE_STATE> succs = succ(node, 3); //Size is always 3 with idastar
+    numNodesExpanded++;
     for (list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
         tuple<int, PUZZLE_STATE> solution = recursiveSearch(*iter, limit);
 
