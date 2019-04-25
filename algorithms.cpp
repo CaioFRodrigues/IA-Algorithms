@@ -4,9 +4,12 @@
 #include <iostream>
 #include <set>
 #include <map>
+#include <ostream>
 #include <fstream>
 #include <string>
+#include <tuple>
 #include "algorithms.h"
+
 
 using namespace std;
 using namespace std::chrono;
@@ -152,6 +155,54 @@ int astar(char *init, int puzzleSize) {
         }
     }
 
+    return -1;
+
+}
+
+int idastar(char *init, int puzzleSize){
+    int puzzleRoot = getPuzzleRoot(puzzleSize);
+    PUZZLE_STATE node = makeNodeHeuristic(init, puzzleRoot);
+    int limit = getF(node);
+
+
+
+    while(limit < -1){
+        tuple<int, PUZZLE_STATE> result = recursiveSearch(node, limit);
+        limit = get<0>(result);
+
+        if(isGoal(get<1>(result).state) == true)
+            return get<1>(result).g;
+
+        
+
+    }
+    return -1;
+
+
+}
+
+tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
+
+    if(getF(node) > limit)
+        return make_tuple(getF(node), node);
+    
+    if (isGoal(node.state))
+        return make_tuple(-1, node);
+    
+    int nextLimit = 2147483647; //highest int
+
+    list<PUZZLE_STATE> succs = succ(node, 3); //Size is always 3 with idastar
+    for (list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
+        tuple<int, PUZZLE_STATE> solution = recursiveSearch(*iter, limit);
+
+        if (isGoal(get<1>(solution).state)){
+            return make_tuple(-1, get<1>(solution));
+        }
+
+        nextLimit = min(nextLimit, get<0>(solution));
+    }
+
+    return make_tuple(nextLimit, node);
 }
 
 int gbfs(char *init, int puzzleSize){
@@ -180,3 +231,4 @@ int gbfs(char *init, int puzzleSize){
         }
     }
 }
+

@@ -44,6 +44,7 @@ int getMarcoPoloDistance(int currentPosition, int desiredPosition, int puzzleRoo
 int getHorizontalPosition(int pos, int puzzleRoot);
 int getVerticalPosition(int pos, int puzzleRoot);
 int getPuzzleRoot(int puzzleSize);
+int getF(PUZZLE_STATE node);
 
 //Sorted list functor
 
