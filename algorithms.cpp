@@ -153,28 +153,37 @@ int astar(char *init, int puzzleSize) {
             numNodesExpanded++;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize), &heuristicAcc);
             heuristicCount += succs.size();
-            getchar();
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
                 open.insert(*iter); //No need to check if it is infinite because it will never be
             }
         }
     }
-
     return -1;
-
 }
 
-int idastar(char *init, int puzzleSize){
-    int puzzleRoot = getPuzzleRoot(puzzleSize);
-    PUZZLE_STATE node = makeNodeHeuristic(init, puzzleRoot);
-    int limit = getF(node);
 
-    while(limit < -1){
+int idastar(char *init){
+    int puzzleRoot = 3;
+    PUZZLE_STATE node = makeNodeHeuristic(init, puzzleRoot);
+    int heuristicInitial = node.h;
+    int limit = getF(node);
+    auto start = steady_clock::now();
+
+    numNodesExpanded = 0;
+    heuristicAcc = 0;
+    heuristicCount = 0;
+
+    while(limit > -1){
         tuple<int, PUZZLE_STATE> result = recursiveSearch(node, limit);
         limit = get<0>(result);
 
-        if(isGoal(get<1>(result).state) == true)
+        if(isGoal(get<1>(result).state) == true){
+            auto end = steady_clock::now();
+            auto solutionTime = (int) duration_cast<milliseconds>(end-start).count();
+            string output = to_string(numNodesExpanded) + "," + to_string(get<1>(result).g) + "," + to_string((float) solutionTime/1000) + "," + to_string((float) heuristicAcc/heuristicCount) + "," + to_string(heuristicInitial);
+            cout << output << endl;
             return get<1>(result).g;
+        }
     }
     return -1;
 }
@@ -189,19 +198,22 @@ tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
     
     int nextLimit = 2147483647; //highest int
 
+    numNodesExpanded++;
     list<PUZZLE_STATE> succs = succ(node, 3, &heuristicAcc); //Size is always 3 with idastar
+    heuristicCount += succs.size();
     for (list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
         tuple<int, PUZZLE_STATE> solution = recursiveSearch(*iter, limit);
 
         if (isGoal(get<1>(solution).state)){
             return make_tuple(-1, get<1>(solution));
         }
-
         nextLimit = min(nextLimit, get<0>(solution));
     }
 
     return make_tuple(nextLimit, node);
 }
+
+
 
 int gbfs(char *init, int puzzleSize){
     auto start = steady_clock::now();

@@ -23,7 +23,7 @@ void callAlgorithm(int algID, char* init, int puzzleSize) {
             break;
 
         case IDASTAR:
-            idastar(init, puzzleSize);
+            idastar(init);
             break;
 
         case GBFS:

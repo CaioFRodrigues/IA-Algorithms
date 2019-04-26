@@ -28,7 +28,7 @@ int bfs(char *init);
 int idfs(char *init);
 int astar(char *init, int puzzleSize);
 int gbfs(char *init, int puzzleSize);
-int idastar(char *init, int puzzleSize);
+int idastar(char *init);
 tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit);
 
 
