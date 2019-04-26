@@ -147,8 +147,18 @@ int astar(char *init, int puzzleSize) {
                 optimalSolutionLen = currentPuzzle.g;
                 string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + "," + to_string((float) heuristicAcc/heuristicCount) + "," + to_string(heuristicInitial);
                 cout << output << endl;
-                if (writeInCsv) writeCsv("astar.csv", output);
+                if (writeInCsv) writeCsv("astar" + to_string(puzzleSize) + ".csv", output);
                 return currentPuzzle.g;
+            } else {
+                auto end = steady_clock::now();
+                solutionTime = (int) duration_cast<milliseconds>(end-start).count();
+                if (solutionTime > 30000) {    // solution time more than 30s
+                    cout << solutionTime << endl;
+                    string output = "-,-,-,-,-";
+                    cout << output << endl;
+                    if (writeInCsv) writeCsv("astar" + to_string(puzzleSize) + ".csv", output);
+                    return -1;
+                }
             }
             numNodesExpanded++;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize), &heuristicAcc);
@@ -182,6 +192,7 @@ int idastar(char *init){
             auto solutionTime = (int) duration_cast<milliseconds>(end-start).count();
             string output = to_string(numNodesExpanded) + "," + to_string(get<1>(result).g) + "," + to_string((float) solutionTime/1000) + "," + to_string((float) heuristicAcc/heuristicCount) + "," + to_string(heuristicInitial);
             cout << output << endl;
+            if (writeInCsv) writeCsv("idastar.csv", output);
             return get<1>(result).g;
         }
     }
