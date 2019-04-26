@@ -179,7 +179,7 @@ list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle) {
 }
 
 // given a state, return a list of successors states with g and h calculated
-list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot) {
+list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot, int *heuristicAcc) {
     char* state = puzzle.state;
     int g = puzzle.g + 1;
 
@@ -197,24 +197,28 @@ list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot) {
             move8(state, UP, blankPosition, puzzleStateUP.state);
             puzzleStateUP.g = g;
             puzzleStateUP.h = heuristic(puzzleStateUP, puzzleRoot);
+            *heuristicAcc += puzzleStateUP.h;
             succs.push_back(puzzleStateUP);
         }
         if (blankPosition != 0 && blankPosition != 3 && blankPosition != 6) {
             move8(state, LEFT, blankPosition, puzzleStateLEFT.state);
             puzzleStateLEFT.g = g;
             puzzleStateLEFT.h = heuristic(puzzleStateLEFT, puzzleRoot);
+            *heuristicAcc += puzzleStateLEFT.h;
             succs.push_back(puzzleStateLEFT);
         }
         if (blankPosition != 2 && blankPosition != 5 && blankPosition != 8) {
             move8(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
             puzzleStateRIGHT.g = g;
             puzzleStateRIGHT.h = heuristic(puzzleStateRIGHT, puzzleRoot);
+            *heuristicAcc += puzzleStateRIGHT.h;
             succs.push_back(puzzleStateRIGHT);
         }
         if (blankPosition + 3 <= 8) {
             move8(state, DOWN, blankPosition, puzzleStateDOWN.state);
             puzzleStateDOWN.g = g;
             puzzleStateDOWN.h = heuristic(puzzleStateDOWN, puzzleRoot);
+            *heuristicAcc += puzzleStateDOWN.h;
             succs.push_back(puzzleStateDOWN);
         }
     } else {
@@ -222,24 +226,28 @@ list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot) {
             move15(state, UP, blankPosition, puzzleStateUP.state);
             puzzleStateUP.g = g;
             puzzleStateUP.h = heuristic(puzzleStateUP, puzzleRoot);
+            *heuristicAcc += puzzleStateUP.h;
             succs.push_back(puzzleStateUP);
         }
         if (blankPosition != 0 && blankPosition != 4 && blankPosition != 8 && blankPosition != 12) {
             move15(state, LEFT, blankPosition, puzzleStateLEFT.state);
             puzzleStateLEFT.g = g;
             puzzleStateLEFT.h = heuristic(puzzleStateLEFT, puzzleRoot);
+            *heuristicAcc += puzzleStateLEFT.h;
             succs.push_back(puzzleStateLEFT);
         }
         if (blankPosition != 3 && blankPosition != 7 && blankPosition != 11 && blankPosition != 15) {
             move15(state, RIGHT, blankPosition, puzzleStateRIGHT.state);
             puzzleStateRIGHT.g = g;
             puzzleStateRIGHT.h = heuristic(puzzleStateRIGHT, puzzleRoot);
+            *heuristicAcc += puzzleStateRIGHT.h;
             succs.push_back(puzzleStateRIGHT);
         }
         if (blankPosition + 4 <= 15) {
             move15(state, DOWN, blankPosition, puzzleStateDOWN.state);
             puzzleStateDOWN.g = g;
             puzzleStateDOWN.h = heuristic(puzzleStateDOWN, puzzleRoot);
+            *heuristicAcc += puzzleStateDOWN.h;
             succs.push_back(puzzleStateDOWN);
         }
     }

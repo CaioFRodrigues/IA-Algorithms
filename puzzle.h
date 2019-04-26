@@ -6,23 +6,18 @@
 #define BLANK_TILE 0
 
 using namespace std;
-enum moveTo
-{
+enum moveTo {
     UP,
     RIGHT,
     DOWN,
     LEFT
 };
 
-typedef struct
-{
+typedef struct {
     char state[16];
     int h;
     int g;
 } PUZZLE_STATE;
-
-// extern int heuristicAcc;
-// extern int heuristicCount;
 
 void printState(char* state);
 void printState15(char* state);
@@ -40,7 +35,7 @@ int getBlankPosition(char* state, int puzzleSize);
 //Move Functions
 bool move8(char* state, moveTo movement, int blankPosition, char* newState);
 list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle);
-list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot); 
+list<PUZZLE_STATE> succ(PUZZLE_STATE puzzle, int puzzleRoot, int *heuristicAcc);
 
 //Heuristic functions
 int heuristic(PUZZLE_STATE puzzle, int puzzleRoot);
