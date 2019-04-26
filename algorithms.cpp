@@ -153,6 +153,7 @@ int astar(char *init, int puzzleSize) {
             numNodesExpanded++;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize), &heuristicAcc);
             heuristicCount += succs.size();
+            getchar();
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
                 open.insert(*iter); //No need to check if it is infinite because it will never be
             }
@@ -167,8 +168,6 @@ int idastar(char *init, int puzzleSize){
     int puzzleRoot = getPuzzleRoot(puzzleSize);
     PUZZLE_STATE node = makeNodeHeuristic(init, puzzleRoot);
     int limit = getF(node);
-    heuristicAcc = 0;
-    heuristicCount = 0;
 
     while(limit < -1){
         tuple<int, PUZZLE_STATE> result = recursiveSearch(node, limit);
@@ -176,13 +175,8 @@ int idastar(char *init, int puzzleSize){
 
         if(isGoal(get<1>(result).state) == true)
             return get<1>(result).g;
-
-        
-
     }
     return -1;
-
-
 }
 
 tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
@@ -196,7 +190,6 @@ tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
     int nextLimit = 2147483647; //highest int
 
     list<PUZZLE_STATE> succs = succ(node, 3, &heuristicAcc); //Size is always 3 with idastar
-    heuristicCount += succs.size();
     for (list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
         tuple<int, PUZZLE_STATE> solution = recursiveSearch(*iter, limit);
 
@@ -204,7 +197,7 @@ tuple<int,PUZZLE_STATE> recursiveSearch(PUZZLE_STATE node, int limit){
             return make_tuple(-1, get<1>(solution));
         }
 
-        // nextLimit = min(nextLimit, get<0>(solution));
+        nextLimit = min(nextLimit, get<0>(solution));
     }
 
     return make_tuple(nextLimit, node);
@@ -236,15 +229,15 @@ int gbfs(char *init, int puzzleSize){
                 auto end = steady_clock::now();
                 solutionTime = (int) duration_cast<milliseconds>(end-start).count();
                 optimalSolutionLen = currentPuzzle.g;
-                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + "," + to_string((float) heuristicAcc/heuristicCount) + "," + to_string(heuristicInitial);
+                string output = to_string(numNodesExpanded) + "," + to_string(optimalSolutionLen) + "," + to_string((float) solutionTime/1000) + "," + to_string((float) heuristicAcc/numNodesExpanded) + "," + to_string(heuristicInitial);
                 cout << output << endl;
                 if (writeInCsv) writeCsv("gbfs.csv", output);
                 return currentPuzzle.g;
             }
 
             numNodesExpanded++;
+            heuristicAcc += currentPuzzle.h;
             list<PUZZLE_STATE> succs = succ(currentPuzzle, getPuzzleRoot(puzzleSize), &heuristicAcc);
-            heuristicCount += succs.size();
             for(list<PUZZLE_STATE>::iterator iter = succs.begin(); iter != succs.end(); iter++){
                 open.insert(*iter); //No need to check if it is infinite because it will never be
             }

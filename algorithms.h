@@ -26,7 +26,6 @@ struct cmpASTAR {
 // Algorithms implemented
 int bfs(char *init);
 int idfs(char *init);
-// int depthLimitedSearch(char *init, char *father, int depthLimited);
 int astar(char *init, int puzzleSize);
 int gbfs(char *init, int puzzleSize);
 int idastar(char *init, int puzzleSize);
