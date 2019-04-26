@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 
     char const* const fileName = "8puzzle_instances.txt"; /* should check that argc > 1 */
     FILE* file = fopen(fileName, "r"); /* should check the result */
-    char line[18];
+    char line[38];
 
     char programName[BUFSIZ];
     strcpy(programName, "..\\main.exe ");
@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
         strcpy(call, programName);
         strcat(call, line);
         if (strlen(call) > 21) {
+            puts(call);
             system(call);
         }
     }
